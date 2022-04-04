@@ -25,10 +25,8 @@ export default function App() {
   }
 
   const roll = (d) => {
-    setTimeout(()=> {
-      setDR(Math.floor(Math.random() * d) + 1);
-      rollingDice();
-    }, 500)
+    setDR(Math.floor(Math.random() * d) + 1);
+    rollingDice();
   }
 
   const add = () => {
