@@ -25,8 +25,12 @@ export default function App() {
   }
 
   const roll = (d) => {
-    setDR(Math.floor(Math.random() * d) + 1);
-    rollingDice();
+    rand = Math.floor(Math.random() * d) + 1
+    setDR(rand);
+    console.log('Dice Roll', dR)
+    let log = `${dR} + ${modifier} = ${dR + modifier}`
+    setLogs(logs.concat(log))
+  
   }
 
   const add = () => {
@@ -43,14 +47,19 @@ export default function App() {
     }
   }
 
+
+  /*
   const rollingDice = () => {
+    console.log('Dice Roll', dR)
+    
     let log = `${dR} + ${modifier} = ${dR + modifier}`
 
 
     setLogs(logs.concat(log))
-    console.log("-")
-    console.log(logs)
+  
   }
+  */
+ 
 
   const containerStyle = { backgroundColor: 'white', padding: 20 };
   const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
@@ -110,7 +119,7 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
            <View>
-              {logs && logs.length ? (
+              {logs ? (
                 logs.map((log, index) => {
                   return<List.Item key={ index } titleStyle = {{textAlign: 'right' }} title={`${log}`} left={props => <List.Icon {...props} icon="folder" />}
               />
