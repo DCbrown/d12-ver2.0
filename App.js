@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Provider as PaperProvider } from "react-native-paper";
-import { Modal, Portal, Text, Button, Provider } from "react-native-paper";
+import {
+  Modal,
+  Portal,
+  Text,
+  Button,
+  Provider,
+  IconButton,
+  Colors,
+  FAB,
+} from "react-native-paper";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { TextInput } from "react-native-paper";
 import { List } from "react-native-paper";
@@ -24,13 +33,15 @@ export default function App() {
   };
 
   const roll = (d) => {
-    rand = Math.floor(Math.random() * d) + 1;
+    let rand = Math.floor(Math.random() * d) + 1;
     setDR(rand);
-    console.log("Dice Roll", dR);
-    let log = `${rand} + ${modifier} = ${rand + modifier}`;
+    let add = rand + modifier;
+    console.log(add);
+    let log = `${rand} + ${Number(modifier)} = ${add}`;
     setLogs((prev) => {
       return [...prev, log];
     });
+    hideModal();
   };
 
   const add = () => {
@@ -165,19 +176,35 @@ export default function App() {
             {logs
               ? logs.map((log, index) => {
                   return (
-                    <List.Item
-                      key={index}
-                      titleStyle={{ textAlign: "right" }}
-                      title={`${log}`}
-                      left={(props) => <List.Icon {...props} icon="folder" />}
-                    />
+                    <View>
+                      <List.Item
+                        key={index}
+                        titleStyle={{ textAlign: "right" }}
+                        title={`${log}`}
+                        left={(props) => <List.Icon {...props} icon="folder" />}
+                      />
+                      <IconButton
+                        icon="camera"
+                        titleStyle={{ textAlign: "right" }}
+                        color={Colors.red500}
+                        size={20}
+                        onPress={() => console.log("Pressed")}
+                      />
+                      <Divider />
+                    </View>
                   );
                 })
               : null}
-            <Divider />
           </View>
         </ScrollView>
       </SafeAreaView>
+      <FAB
+        style={styles.fab}
+        small
+        icon="plus"
+        label="Roll Dice"
+        onPress={() => console.log("Pressed")}
+      />
     </Provider>
   );
 }
@@ -193,5 +220,11 @@ const styles = StyleSheet.create({
   },
   input: {
     width: 100,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
