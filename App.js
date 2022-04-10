@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Provider as PaperProvider } from "react-native-paper";
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import {
   Modal,
   Portal,
@@ -11,12 +11,13 @@ import {
   Colors,
   FAB,
 } from "react-native-paper";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-paper";
 import { List } from "react-native-paper";
 import { Divider } from "react-native-paper";
 import { Appbar } from "react-native-paper";
 import { Platform } from "react-native";
+import { ProgressBar } from 'react-native-paper';
 import { SvgUri } from "react-native-svg";
 import { D8light } from "./img/D8light.svg";
 
@@ -26,36 +27,38 @@ export default function App() {
   const [dR, setDR] = useState(0);
   const [logs, setLogs] = useState([]);
 
-  const showModal = () => setVisible(true);
+  const showModal = () => { 
+    setVisible(true); 
+    setModifier(0)
+  }
   const hideModal = () => {
     setVisible(false);
-    setModifier(0);
+  };
+
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#000000',
+      accent: '#f1c40f',
+    },
   };
 
   const roll = (d) => {
     let rand = Math.floor(Math.random() * d) + 1;
     setDR(rand);
-    let add = rand + modifier;
+    let add = rand + Number(modifier);
     console.log(add);
-    let log = `${rand} + ${Number(modifier)} = ${add}`;
+    let log = `${rand} + ${modifier} = ${add}` 
     setLogs((prev) => {
       return [...prev, log];
     });
     hideModal();
   };
 
-  const add = () => {
-    setModifier((prev) => {
-      return prev + 1;
-    });
-  };
-
-  const subtract = () => {
-    if (modifier != 0) {
-      setModifier((prev) => {
-        return prev - 1;
-      });
-    }
+  const removeItem = (index) => {
+    setLogs(logs.filter((o, i) => index !== i));
   };
 
   /*
@@ -74,7 +77,7 @@ export default function App() {
   const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 
   return (
-    <Provider>
+    <PaperProvider theme={theme}>
       <Portal>
         <Appbar.Header>
           <Appbar.Content title="D12" />
@@ -87,7 +90,16 @@ export default function App() {
           onDismiss={hideModal}
           contentContainerStyle={containerStyle}
         >
-          <Text>Example Modal. Click outside this area to dismiss.</Text>
+          <View style={styles.modifierWrapper}>
+            <TextInput
+              mode="outlined"
+              label="Add Modifier"
+              style={styles.input}
+              value={modifier.toString().replace(/^0+/, '')}
+              keyboardType={"phone-pad"}
+              onChangeText={(modifier) => setModifier(modifier)}
+            />
+          </View>
           <View style={styles.container}>
             {/*
           <SvgUri style={styles.button} 
@@ -105,91 +117,71 @@ export default function App() {
           */}
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(4)}
-            ></Button>
+            >D4</Button>
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(6)}
-            ></Button>
+            >D6</Button>
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(8)}
-            ></Button>
+            >D8</Button>
           </View>
           <View style={styles.container}>
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(10)}
-            ></Button>
+            >D10</Button>
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(12)}
-            ></Button>
+            >D12</Button>
             <Button
               style={styles.button}
-              icon="camera"
+              icon="cube"
               mode="contained"
               onPress={() => roll(20)}
-            ></Button>
+            >D20</Button>
           </View>
-          <View style={styles.container}>
-            <Button
-              style={styles.button}
-              icon="camera"
-              mode="contained"
-              onPress={() => add()}
-            ></Button>
-            <TextInput
-              style={styles.input}
-              value={modifier.toString()}
-              keyboardType="numeric"
-              onChangeText={(modifier) => setModifier(modifier)}
-            />
-            <Button
-              style={styles.button}
-              icon="camera"
-              mode="contained"
-              onPress={() => subtract()}
-            ></Button>
-          </View>
+          
         </Modal>
       </Portal>
 
-      <Button style={{ marginTop: 105 }} onPress={showModal}>
-        Show
-      </Button>
-      <Text>{modifier}</Text>
-      <Text>{dR}</Text>
+      {    
+      /*<Text style={{paddingTop: 100}}>{modifier}</Text>
+      <Text>{dR}</Text> */
+      }
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
           <View>
+            {logs < 1 ? null : <Text style={{textAlign: 'center', paddingTop: 75}}>Hold down dice roll for 2 seconds to remove from log</Text> }
+            {logs < 1 ? null : <Divider style={{marginTop: 20}} />}
             {logs
               ? logs.map((log, index) => {
                   return (
-                    <View>
+                    <View key={index}>
+                    <TouchableOpacity 
+                      onLongPress={() => {
+                        removeItem(index)
+                      }}
+                      delayLongPress={2000} >
                       <List.Item
-                        key={index}
                         titleStyle={{ textAlign: "right" }}
                         title={`${log}`}
-                        left={(props) => <List.Icon {...props} icon="folder" />}
+                        left={(props) => <List.Icon {...props} icon="folder" /> }
                       />
-                      <IconButton
-                        icon="camera"
-                        titleStyle={{ textAlign: "right" }}
-                        color={Colors.red500}
-                        size={20}
-                        onPress={() => console.log("Pressed")}
-                      />
+                      </TouchableOpacity> 
                       <Divider />
                     </View>
                   );
@@ -201,25 +193,31 @@ export default function App() {
       <FAB
         style={styles.fab}
         small
-        icon="plus"
+        icon="cube"
         label="Roll Dice"
-        onPress={() => console.log("Pressed")}
+        onPress={showModal}
       />
-    </Provider>
+    </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
+    marginLeft: 10,
+    marginRight: 20
   },
   button: {
     width: 60,
     height: 60,
     margin: 20,
   },
+  modifierWrapper: {
+    paddingLeft: 20
+  },
   input: {
-    width: 100,
+    width: "80%",
+    textAlign: "center",
   },
   fab: {
     position: "absolute",
