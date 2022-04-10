@@ -96,6 +96,7 @@ export default function App() {
               label="Add Modifier"
               style={styles.input}
               value={modifier.toString().replace(/^0+/, '')}
+              maxLength={4}
               keyboardType={"phone-pad"}
               onChangeText={(modifier) => setModifier(modifier)}
             />
