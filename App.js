@@ -1,41 +1,35 @@
-import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import React, { useState } from "react";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import { Switch } from "react-native-paper";
+import { Modal, Portal, Text, FAB } from "react-native-paper";
 import {
-  Modal,
-  Portal,
-  Text,
-  Button,
-  Provider,
-  IconButton,
-  Colors,
-  FAB,
-} from "react-native-paper";
-import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { TextInput } from "react-native-paper";
-import { List } from "react-native-paper";
 import { Divider } from "react-native-paper";
 import { Appbar } from "react-native-paper";
-import { Platform } from "react-native";
-import { ProgressBar } from 'react-native-paper';
-import { SvgUri } from "react-native-svg";
-import SVGd4 from './img/light/d4.svg';
-import SVGd6 from './img/light/d6.svg';
-import SVGd8 from './img/light/d8.svg';
-import SVGd10 from './img/light/d10.svg';
-import SVGd12 from './img/light/d12.svg';
-import SVGd20 from './img/light/d20.svg';
+import SVGd4 from "./img/light/d4.svg";
+import SVGd6 from "./img/light/d6.svg";
+import SVGd8 from "./img/light/d8.svg";
+import SVGd10 from "./img/light/d10.svg";
+import SVGd12 from "./img/light/d12.svg";
+import SVGd20 from "./img/light/d20.svg";
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
   const [modifier, setModifier] = React.useState(0);
   const [dR, setDR] = useState(0);
   const [logs, setLogs] = useState([]);
+  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
 
-  const showModal = () => { 
-    setVisible(true); 
-    setModifier(0)
-  }
+  const showModal = () => {
+    setVisible(true);
+    setModifier(0);
+  };
   const hideModal = () => {
     setVisible(false);
   };
@@ -45,8 +39,8 @@ export default function App() {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#000000',
-      accent: '#f1c40f',
+      primary: "#000000",
+      accent: "#f1c40f",
     },
   };
 
@@ -55,11 +49,11 @@ export default function App() {
     setDR(rand);
     let add = rand + Number(modifier);
     console.log(add);
-    let log = `${rand} + ${modifier} =` 
+    let log = `${rand} + ${modifier} =`;
     setLogs((prev) => {
-      return [...prev, {log: log, dice: d, sum: add}];
+      return [...prev, { log: log, dice: d, sum: add }];
     });
-    console.log(logs)
+    console.log(logs);
     hideModal();
   };
 
@@ -67,47 +61,36 @@ export default function App() {
     setLogs(logs.filter((o, i) => index !== i));
   };
 
-  const DiceIcon = (logs) => {
-    switch(logs.dice) {
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+
+  function DiceIcon(logs) {
+    switch (logs.dice) {
       case 4:
-        return (<SVGd4 width={50} height={50}/>)
+        return <SVGd4 width={50} height={50} />;
       case 6:
-        return (<SVGd6 width={50} height={50}/>)
+        return <SVGd6 width={50} height={50} />;
       case 8:
-        return (<SVGd8 width={50} height={50}/>)
+        return <SVGd8 width={50} height={50} />;
       case 10:
-        return (<SVGd10 width={50} height={50}/>) 
+        return <SVGd10 width={50} height={50} />;
       case 12:
-        return (<SVGd12 width={50} height={50}/>)
+        return <SVGd12 width={50} height={50} />;
       case 20:
-        return (<SVGd20 width={50} height={50}/>)           
+        return <SVGd20 width={50} height={50} />;
       default:
-        return null
+        return null;
     }
   }
-  
-
-  /*
-  const rollingDice = () => {
-    console.log('Dice Roll', dR)
-    
-    let log = `${dR} + ${modifier} = ${dR + modifier}`
-
-
-    setLogs(logs.concat(log))
-  
-  }
-  */
 
   const containerStyle = { backgroundColor: "white", padding: 20 };
-  const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 
   return (
     <PaperProvider theme={theme}>
       <Portal>
         <Appbar.Header>
-          <Appbar.Content title="D12" />
-          <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
+          <SVGd4 width={40} height={40} />
+          <Appbar.Content title={isSwitchOn ? "Sun" : "Moon"} />
+          <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
         </Appbar.Header>
 
         <Modal
@@ -121,96 +104,80 @@ export default function App() {
               mode="outlined"
               label="Add Modifier"
               style={styles.input}
-              value={modifier.toString().replace(/^0+/, '')}
+              value={modifier.toString().replace(/^0+/, "")}
               maxLength={4}
               keyboardType={"phone-pad"}
               onChangeText={(modifier) => setModifier(modifier)}
             />
           </View>
           <View style={styles.container}>
-            {
-             
-          /*
-          <List.Item
-              key={ index }
-              titleStyle = {{textAlign: 'right' }}
-              title={`${log.name}`}
-              left={props => <List.Icon {...props} icon="folder" />}
-            />
-          */}
-            <SVGd4 
-              width={100} 
-              height={100} 
-              onPress={() => roll(4)} />
-            <SVGd6 
-              width={100} 
-              height={100} 
-              onPress={() => roll(6)} />
-            <SVGd8 
-             width={100} 
-             height={100} 
-             onPress={() => roll(8)} />
+            <SVGd4 width={100} height={100} onPress={() => roll(4)} />
+            <SVGd6 width={100} height={100} onPress={() => roll(6)} />
+            <SVGd8 width={100} height={100} onPress={() => roll(8)} />
           </View>
           <View style={styles.container}>
-            <SVGd10 
-              width={100} 
-              height={100} 
-              onPress={() => roll(10)} />
-            <SVGd12
-              width={100} 
-              height={100} 
-              onPress={() => roll(12)} />
-            <SVGd20
-             width={100} 
-             height={100} 
-             onPress={() => roll(20)} />
+            <SVGd10 width={100} height={100} onPress={() => roll(10)} />
+            <SVGd12 width={100} height={100} onPress={() => roll(12)} />
+            <SVGd20 width={100} height={100} onPress={() => roll(20)} />
           </View>
-          
         </Modal>
       </Portal>
-
-      {    
-      /*<Text style={{paddingTop: 100}}>{modifier}</Text>
-      <Text>{dR}</Text> */
-      }
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
           <View>
-            {logs < 1 ? null : <Text style={{textAlign: 'center', paddingTop: 75}}>Hold down dice roll for 2 seconds to remove from log</Text> }
-            {logs < 1 ? null : <Divider style={{marginTop: 20}} />}
+            {logs < 1 ? null : (
+              <Text style={{ textAlign: "center", paddingTop: 75 }}>
+                Hold down dice roll for 2 seconds to remove from log
+              </Text>
+            )}
+            {logs < 1 ? null : <Divider style={{ marginTop: 20 }} />}
             {logs
               ? logs.map((log, index) => {
                   return (
                     <View key={index}>
-                    <TouchableOpacity 
-                      onLongPress={() => {
-                        removeItem(index)
-                      }}
-                      delayLongPress={2000} >
-                      <View style={{flexDirection: "row", flex: 1}}>
-                      {(() => {
-                        switch(log.dice) {
-                          case 4:
-                            return (<SVGd4 width={50} height={50}/>)
-                          case 6:
-                            return (<SVGd6 width={50} height={50}/>)
-                          case 8:
-                            return (<SVGd8 width={50} height={50}/>)
-                          case 10:
-                            return (<SVGd10 width={50} height={50}/>) 
-                          case 12:
-                            return (<SVGd12 width={50} height={50}/>)
-                          case 20:
-                            return (<SVGd20 width={50} height={50}/>)           
-                          default:
-                            return null
-                        }
-                      })()}
-                      <Text style={{alignSelf: "flex-end", position:'absolute', right:5, paddingBottom: 15, fontSize: 18}}>
-                        {log.log} <Text style={{color: "#f1c40f", fontWeight: "bold"}}>{log.sum}</Text>
-                      </Text>
-                      </View>
-                      </TouchableOpacity> 
+                      <TouchableOpacity
+                        onLongPress={() => {
+                          removeItem(index);
+                        }}
+                        delayLongPress={2000}
+                      >
+                        <View style={{ flexDirection: "row", flex: 1 }}>
+                          {(() => {
+                            switch (log.dice) {
+                              case 4:
+                                return <SVGd4 width={50} height={50} />;
+                              case 6:
+                                return <SVGd6 width={50} height={50} />;
+                              case 8:
+                                return <SVGd8 width={50} height={50} />;
+                              case 10:
+                                return <SVGd10 width={50} height={50} />;
+                              case 12:
+                                return <SVGd12 width={50} height={50} />;
+                              case 20:
+                                return <SVGd20 width={50} height={50} />;
+                              default:
+                                return null;
+                            }
+                          })()}
+                          <Text
+                            style={{
+                              alignSelf: "flex-end",
+                              position: "absolute",
+                              right: 5,
+                              paddingBottom: 15,
+                              fontSize: 18,
+                            }}
+                          >
+                            {log.log}{" "}
+                            <Text
+                              style={{ color: "#f1c40f", fontWeight: "bold" }}
+                            >
+                              {log.sum}
+                            </Text>
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
                       <Divider />
                     </View>
                   );
@@ -234,7 +201,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     marginLeft: 20,
-    marginRight: 20
+    marginRight: 20,
   },
   button: {
     width: 60,
@@ -242,11 +209,12 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   modifierWrapper: {
-    paddingLeft: 20
+    paddingLeft: 20,
   },
   input: {
     width: "90%",
     textAlign: "center",
+    margin: 0,
   },
   fab: {
     position: "absolute",
