@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-import { Switch } from "react-native-paper";
-import { Modal, Portal, Text, FAB } from "react-native-paper";
+import { 
+  Modal, 
+  Portal, 
+  Text, 
+  FAB, 
+  TextInput, 
+  Divider, 
+  Appbar
+} from "react-native-paper";
 import {
   View,
   StyleSheet,
@@ -9,22 +16,19 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { TextInput } from "react-native-paper";
-import { Divider } from "react-native-paper";
-import { Appbar } from "react-native-paper";
 import SVGd4 from "./img/light/d4.svg";
 import SVGd6 from "./img/light/d6.svg";
 import SVGd8 from "./img/light/d8.svg";
 import SVGd10 from "./img/light/d10.svg";
 import SVGd12 from "./img/light/d12.svg";
 import SVGd20 from "./img/light/d20.svg";
+import Doorway from "./img/light/doorway.svg";
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
   const [modifier, setModifier] = React.useState(0);
   const [dR, setDR] = useState(0);
   const [logs, setLogs] = useState([]);
-  const [isSwitchOn, setIsSwitchOn] = React.useState(true);
 
   const showModal = () => {
     setVisible(true);
@@ -48,12 +52,10 @@ export default function App() {
     let rand = Math.floor(Math.random() * d) + 1;
     setDR(rand);
     let add = rand + Number(modifier);
-    console.log(add);
     let log = `${rand} + ${modifier} =`;
     setLogs((prev) => {
       return [...prev, { log: log, dice: d, sum: add }];
     });
-    console.log(logs);
     hideModal();
   };
 
@@ -61,36 +63,13 @@ export default function App() {
     setLogs(logs.filter((o, i) => index !== i));
   };
 
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
-
-  function DiceIcon(logs) {
-    switch (logs.dice) {
-      case 4:
-        return <SVGd4 width={50} height={50} />;
-      case 6:
-        return <SVGd6 width={50} height={50} />;
-      case 8:
-        return <SVGd8 width={50} height={50} />;
-      case 10:
-        return <SVGd10 width={50} height={50} />;
-      case 12:
-        return <SVGd12 width={50} height={50} />;
-      case 20:
-        return <SVGd20 width={50} height={50} />;
-      default:
-        return null;
-    }
-  }
-
   const containerStyle = { backgroundColor: "white", padding: 20 };
 
   return (
     <PaperProvider theme={theme}>
       <Portal>
         <Appbar.Header>
-          <SVGd4 width={40} height={40} />
-          <Appbar.Content title={isSwitchOn ? "Sun" : "Moon"} />
-          <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+          <Appbar.Content title={<Doorway width={40} height={40} />} />
         </Appbar.Header>
 
         <Modal
@@ -110,6 +89,7 @@ export default function App() {
               onChangeText={(modifier) => setModifier(modifier)}
             />
           </View>
+          <Text style={styles.subText}>Then make a roll</Text>
           <View style={styles.container}>
             <SVGd4 width={100} height={100} onPress={() => roll(4)} />
             <SVGd6 width={100} height={100} onPress={() => roll(6)} />
@@ -124,7 +104,7 @@ export default function App() {
       </Portal>
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
-          <View>
+          <View style={styles.diceList}>
             {logs < 1 ? null : (
               <Text style={{ textAlign: "center", paddingTop: 75 }}>
                 Hold down dice roll for 2 seconds to remove from log
@@ -141,7 +121,7 @@ export default function App() {
                         }}
                         delayLongPress={2000}
                       >
-                        <View style={{ flexDirection: "row", flex: 1 }}>
+                        <View style={styles.diceRow}>
                           {(() => {
                             switch (log.dice) {
                               case 4:
@@ -160,15 +140,7 @@ export default function App() {
                                 return null;
                             }
                           })()}
-                          <Text
-                            style={{
-                              alignSelf: "flex-end",
-                              position: "absolute",
-                              right: 5,
-                              paddingBottom: 15,
-                              fontSize: 18,
-                            }}
-                          >
+                          <Text style={styles.diceResults}>
                             {log.log}{" "}
                             <Text
                               style={{ color: "#f1c40f", fontWeight: "bold" }}
@@ -222,4 +194,22 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  subText: {
+    textAlign: 'center',
+    marginTop: 10
+  },
+  diceRow: {
+    flexDirection: "row", 
+    flex: 1
+  },
+  diceList: {
+    paddingBottom: 50
+  },
+  diceResults: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    right: 5,
+    paddingBottom: 15,
+    fontSize: 18,
+  }
 });
