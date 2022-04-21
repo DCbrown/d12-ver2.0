@@ -89,7 +89,7 @@ export default function App() {
               onChangeText={(modifier) => setModifier(modifier)}
             />
           </View>
-          <Text style={styles.subText}>Then make a roll</Text>
+          <Text style={styles.subText}>Then select a dice</Text>
           <View style={styles.diceContainer}>
             <View style={styles.container}>
               <SVGd4 width={100} height={100} onPress={() => roll(4)} />
