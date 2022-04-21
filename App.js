@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { 
+  Snackbar,
   Modal, 
   Portal, 
   Text, 
@@ -25,17 +26,19 @@ import SVGd20 from "./img/light/d20.svg";
 import Doorway from "./img/light/doorway.svg";
 
 export default function App() {
-  const [visible, setVisible] = React.useState(false);
+  const [isModalvisible, setIsModalVisible] = React.useState(false);
+  const [isSnackBarvisible, setIsSnackBarVisible] = React.useState(false);
+  const [snackBarMsg, setSnackBarMsg] = React.useState("");
   const [modifier, setModifier] = React.useState(0);
   const [dR, setDR] = useState(0);
   const [logs, setLogs] = useState([]);
 
   const showModal = () => {
-    setVisible(true);
+    setIsModalVisible(true);
     setModifier(0);
   };
   const hideModal = () => {
-    setVisible(false);
+    setIsModalVisible(false);
   };
 
   const theme = {
@@ -56,12 +59,26 @@ export default function App() {
     setLogs((prev) => {
       return [...prev, { log: log, dice: d, sum: add }];
     });
+    onToggleSnackBar();
     hideModal();
   };
 
   const removeItem = (index) => {
     setLogs(logs.filter((o, i) => index !== i));
+    setIsSnackBarVisible(true);
+    setSnackBarMsg("Dice Log Deleted");
+    setTimeout(() => {
+      setIsSnackBarVisible(false);
+    }, 1000)
   };
+
+  const onToggleSnackBar = () => {
+    setIsSnackBarVisible(true);
+    setSnackBarMsg("Dice Log Added");
+    setTimeout(() => {
+      setIsSnackBarVisible(false);
+    }, 1000)
+  } 
 
   const containerStyle = { backgroundColor: "white", padding: 20 };
 
@@ -74,7 +91,7 @@ export default function App() {
 
         <Modal
           style={styles.modal}
-          visible={visible}
+          visible={isModalvisible}
           onDismiss={hideModal}
           contentContainerStyle={containerStyle}
         >
@@ -160,6 +177,9 @@ export default function App() {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <Snackbar visible={isSnackBarvisible}>
+        {snackBarMsg}
+      </Snackbar>
       <FAB
         style={styles.fab}
         small
@@ -215,7 +235,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   diceContainer: {
-    justifyContent: 'center', //Centered vertically
-    alignItems: 'center', // Centered horizontally
+    justifyContent: 'center',
+    alignItems: 'center', 
   }
 });
