@@ -90,15 +90,17 @@ export default function App() {
             />
           </View>
           <Text style={styles.subText}>Then make a roll</Text>
-          <View style={styles.container}>
-            <SVGd4 width={100} height={100} onPress={() => roll(4)} />
-            <SVGd6 width={100} height={100} onPress={() => roll(6)} />
-            <SVGd8 width={100} height={100} onPress={() => roll(8)} />
-          </View>
-          <View style={styles.container}>
-            <SVGd10 width={100} height={100} onPress={() => roll(10)} />
-            <SVGd12 width={100} height={100} onPress={() => roll(12)} />
-            <SVGd20 width={100} height={100} onPress={() => roll(20)} />
+          <View style={styles.diceContainer}>
+            <View style={styles.container}>
+              <SVGd4 width={100} height={100} onPress={() => roll(4)} />
+              <SVGd6 width={100} height={100} onPress={() => roll(6)} />
+              <SVGd8 width={100} height={100} onPress={() => roll(8)} />
+            </View>
+            <View style={styles.container}>
+              <SVGd10 width={100} height={100} onPress={() => roll(10)} />
+              <SVGd12 width={100} height={100} onPress={() => roll(12)} />
+              <SVGd20 width={100} height={100} onPress={() => roll(20)} />
+            </View>
           </View>
         </Modal>
       </Portal>
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   modifierWrapper: {
-    paddingLeft: 20,
+    paddingLeft: 40,
   },
   input: {
     width: "90%",
@@ -211,5 +213,9 @@ const styles = StyleSheet.create({
     right: 5,
     paddingBottom: 15,
     fontSize: 18,
+  },
+  diceContainer: {
+    justifyContent: 'center', //Centered vertically
+    alignItems: 'center', // Centered horizontally
   }
 });
